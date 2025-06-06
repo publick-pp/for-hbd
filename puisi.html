@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Puisi Ulang Tahun</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+      .puisi-hidden {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: opacity 0.7s, transform 0.7s;
+        pointer-events: none;
+        height: 0;
+        overflow: hidden;
+      }
+      .puisi-show {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+        height: auto;
+        transition: opacity 0.7s, transform 0.7s;
+      }
+      .buka-btn {
+        background: #e75480;
+        color: #fff;
+        border: none;
+        border-radius: 20px;
+        padding: 12px 32px;
+        font-size: 1.1rem;
+        cursor: pointer;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 8px rgba(220, 38, 120, 0.12);
+        transition: background 0.2s;
+      }
+      .buka-btn:hover {
+        background: #d63384;
+      }
+      .love-float {
+        position: fixed;
+        left: 50%;
+        bottom: 40px;
+        transform: translateX(-50%);
+        animation: loveUp 1.5s ease-out forwards;
+        z-index: 999;
+        pointer-events: none;
+      }
+      @keyframes loveUp {
+        0% {
+          opacity: 0;
+          transform: translateX(-50%) translateY(40px) scale(0.7) rotate(-10deg);
+        }
+        20% {
+          opacity: 1;
+          transform: translateX(-50%) translateY(0) scale(1.1) rotate(8deg);
+        }
+        60% {
+          opacity: 1;
+          transform: translateX(-50%) translateY(-120px) scale(1) rotate(-8deg);
+        }
+        100% {
+          opacity: 0;
+          transform: translateX(-50%) translateY(-200px) scale(1.2) rotate(10deg);
+        }
+      }
+      @media (max-width: 500px) {
+        .love-card {
+          padding: 20px 4vw !important;
+          max-width: 98vw !important;
+          font-size: 0.98rem !important;
+        }
+        .love-card h2 {
+          font-size: 1.2rem !important;
+        }
+        .love-card p {
+          font-size: 0.98rem !important;
+        }
+        .buka-btn {
+          font-size: 0.98rem !important;
+          padding: 10px 18px !important;
+        }
+      }
+    </style>
+</head>
+<body>
+    <div class="center-container">
+        <div class="love-card">
+            <button id="bukaBtn" class="buka-btn">mau baca puisi tidakk</button>
+            <div id="puisi" class="puisi-hidden">
+                <h2>Puisi buat gita</h2>
+                <p>
+                    07 agustus 2008 delapan adalah awal kebahagiaan<br>
+                    putri cantik yang penuh keceriaan<br>
+                    lahir membawa kehangatan<br>
+                    wajah indah dengan senyman<br><br>
+                    gita, nama sederhana namun penuh makna<br>
+                    datang nya tak pernah ku kira<br>
+                    dia tak seperti mereka <br>
+                    dia orang yang berbeda<br><br>
+                    di gelap nya malam <br>
+                     dia datang sebagai rembulan<br>
+                    di dingin nya malam <br>
+                    dia datang menjadi kehangatan<br><br>
+                    
+
+
+                    Selamat ulang tahun!
+                </p>
+                <p>lanjut tidak</p>
+                <div style="margin-top: 24px; display: flex; gap: 16px; justify-content: center;">
+                    <button onclick="window.location.href='index.html'" class="buka-btn">tidakk</button>
+                    <button onclick="window.location.href='hal3'" class="buka-btn">lanjut</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+      const bukaBtn = document.getElementById('bukaBtn');
+      const puisi = document.getElementById('puisi');
+      bukaBtn.addEventListener('click', function() {
+        puisi.classList.remove('puisi-hidden');
+        puisi.classList.add('puisi-show');
+        bukaBtn.style.display = 'none';
+
+        // Buat 20 love animasi dari bawah ke atas dengan posisi acak
+        for (let i = 0; i < 20; i++) {
+          const love = document.createElement('div');
+          love.className = 'love-float';
+          // Acak posisi horizontal dan delay animasi
+          const left = 40 + Math.random() * 20; // antara 40% - 60%
+          const delay = Math.random() * 0.7; // antara 0 - 0.7 detik
+          love.style.left = left + '%';
+          love.style.animationDelay = delay + 's';
+          love.innerHTML = `
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="#e75480" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 21s-6.716-5.373-9.293-8.293C.37 10.37.37 7.13 2.707 4.793c2.338-2.338 6.13-2.338 8.468 0l.825.825.825-.825c2.338-2.338 6.13-2.338 8.468 0 2.337 2.337 2.337 5.577 0 7.914C18.716 15.627 12 21 12 21z"/>
+            </svg>
+          `;
+          document.body.appendChild(love);
+          setTimeout(() => {
+            love.remove();
+          }, 1700);
+        }
+      });
+    </script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+body, html {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: #ffe4ec;
+  font-family: 'Segoe UI', sans-serif;
+}
+.center-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.love-card {
+  background: #fff0f6;
+  border-radius: 20px;
+  box-shadow: 0 4px 24px rgba(220, 38, 120, 0.15);
+  padding: 40px 30px;
+  text-align: center;
+  max-width: 350px;
+  width: 90vw;
+  box-sizing: border-box;
+}
+.love-card h2 {
+  color: #d63384;
+  margin-bottom: 16px;
+}
+.love-card p {
+  color: #c2185b;
+  margin-bottom: 24px;
+}
+.love-btn {
+  background: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 70px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(220, 38, 120, 0.12);
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+  margin: 0 auto 16px auto;
+  font-size: 2rem;
+}
+.love-btn:hover {
+  box-shadow: 0 4px 16px rgba(220, 38, 120, 0.25);
+}
+.love-text {
+  color: #d63384;
+  font-weight: bold;
+  margin-top: 10px;
+}
+@keyframes heartBeat {
+  0% { transform: scale(1);}
+  14% { transform: scale(1.3);}
+  28% { transform: scale(1);}
+  42% { transform: scale(1.3);}
+  70% { transform: scale(1);}
+}
+.animate__heartBeat {
+  animation: heartBeat 1s;
+}
+@media (max-width: 500px) {
+  .love-card {
+    padding: 24px 8vw;
+    max-width:98vw;
+    font-size: 0.98rem;
+  }
+  .love-btn {
+    width: 52px;
+    height: 52px;
+    font-size: 1.3rem;
+  }
+  .love-card h2 {
+    font-size: 1.2rem;
+  }
+  .love-card p {
+    font-size: 0.98rem;
+  }
+}

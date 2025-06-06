@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game Cocokan Objek</title>
+  <style>
+    body {
+      background: #ffe4ec;
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .game-card {
+      background: #fff0f6;
+      border-radius: 18px;
+      box-shadow: 0 4px 24px rgba(220,38,120,0.15);
+      padding: 36px 28px;
+      text-align: center;
+      max-width: 400px;
+      width: 100%;
+    }
+    .drag-container, .drop-container {
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+    .drag-item, .drop-slot {
+      width: 70px;
+      height: 70px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem; /* emoji & label lebih besar */
+      cursor: grab;
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(220,38,120,0.10);
+      border: 2px solid #e75480;
+      margin-bottom: 8px;
+      user-select: none;
+      padding: 0 2px;
+    }
+    .drop-slot {
+      background: #ffe4ec;
+      border: 2px dashed #e75480;
+      cursor: pointer;
+      font-size: 1rem; /* label lebih besar */
+    }
+    .drop-slot.filled {
+      border-style: solid;
+      background: #fff0f6;
+    }
+    .btn {
+      background: #e75480;
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      padding: 10px 28px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 10px;
+      box-shadow: 0 2px 8px rgba(220, 38, 120, 0.12);
+      transition: background 0.2s;
+    }
+    .btn:hover {
+      background: #d63384;
+    }
+    .msg {
+      margin-top: 14px;
+      color: #d63384;
+      font-weight: bold;
+      min-height: 24px;
+    }
+  </style>
+</head>
+<body>
+  <div class="game-card">
+    <h2>Cocokan Objek</h2>
+    <p>Seret ke jawaban yang benar</p>
+    <div class="drag-container" id="drag-container"></div>
+    <div class="drop-container" id="drop-container"></div>
+    <div class="msg" id="msg"></div>
+  </div>
+  <script>
+    // Data objek dan target
+    const pairs = [
+      { emoji: "gita", label: "tatang" },
+      { emoji: "galih", label: "wahyu" },
+      { emoji: "18-10-2008", label: "galih" },
+      { emoji: "07-08-2008", label: "gita" },
+    ];
+
+    // Acak urutan drag item
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    const dragContainer = document.getElementById('drag-container');
+    const dropContainer = document.getElementById('drop-container');
+    const msg = document.getElementById('msg');
+
+    // Render drag items
+    let dragItems = shuffle([...pairs]);
+    dragItems.forEach((item, idx) => {
+      const div = document.createElement('div');
+      div.className = 'drag-item';
+      div.textContent = item.emoji;
+      div.draggable = true;
+      div.id = 'drag-' + idx;
+      div.dataset.label = item.label;
+      dragContainer.appendChild(div);
+    });
+
+    // Render drop slots
+    pairs.forEach((item, idx) => {
+      const slot = document.createElement('div');
+      slot.className = 'drop-slot';
+      slot.id = 'drop-' + idx;
+      slot.dataset.label = item.label;
+      slot.textContent = item.label;
+      dropContainer.appendChild(slot);
+    });
+
+    // Drag and drop logic
+    let dragged = null;
+
+    document.querySelectorAll('.drag-item').forEach(item => {
+      item.addEventListener('dragstart', e => {
+        dragged = item;
+        setTimeout(() => item.style.visibility = 'hidden', 0);
+      });
+      item.addEventListener('dragend', e => {
+        item.style.visibility = 'visible';
+      });
+    });
+
+    document.querySelectorAll('.drop-slot').forEach(slot => {
+      slot.addEventListener('dragover', e => {
+        e.preventDefault();
+        slot.style.background = '#f8bbd0';
+      });
+      slot.addEventListener('dragleave', e => {
+        slot.style.background = '#ffe4ec';
+      });
+      slot.addEventListener('drop', e => {
+        e.preventDefault();
+        slot.style.background = '#ffe4ec';
+        if (dragged && dragged.dataset.label === slot.dataset.label && !slot.classList.contains('filled')) {
+          slot.textContent = dragged.textContent;
+          slot.classList.add('filled');
+          dragged.style.opacity = 0.3;
+          dragged.draggable = false;
+          checkWin();
+        } else if (!slot.classList.contains('filled')) {
+          msg.textContent = "Belum cocok, coba lagi!";
+        }
+      });
+    });
+
+    function checkWin() {
+      const filled = document.querySelectorAll('.drop-slot.filled').length;
+      if (filled === pairs.length) {
+        msg.textContent = "Selamat! Semua cocok 🎉";
+        setTimeout(() => {
+          window.location.href = "hal7.html"; // ganti ke halaman berikutnya
+        }, 800);
+      }
+    }
+  </script>
+</body>
+</html>

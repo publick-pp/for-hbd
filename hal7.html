@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Love Animation</title>
+  <style>
+    body {
+      background: #ffe4ec;
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .love-canvas {
+      background: transparent;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div style="position:relative; display:flex; align-items:center; justify-content:center; flex-direction:column;">
+    <div style="position:relative; display:flex; align-items:center; justify-content:center;">
+      <canvas id="love-canvas" width="350" height="350" class="love-canvas"></canvas>
+      <div id="love-text"
+        style="position:absolute; left:0; top:0; width:350px; height:350px; display:flex; align-items:center; justify-content:center; pointer-events:none;">
+        <span id="animated-text" style="color:#d63384; font-size:1.6rem; font-weight:bold; text-shadow:0 2px 8px #fff0f6; transition: transform 0.3s;">
+          Happy Birthday Gita!
+        </span>
+      </div>
+    </div>
+    <div style="text-align:center; margin-top:32px;">
+      <a href="index.html" class="btn" style="background:#e75480; color:#fff; border:none; border-radius:20px; padding:10px 28px; font-size:1rem; cursor:pointer; box-shadow:0 2px 8px rgba(220,38,120,0.12); transition:background 0.2s;">Kembali</a>
+    </div>
+  </div>
+  <audio id="love-audio" src="happy-birthday-314197.mp3"></audio>
+  <script>
+    const canvas = document.getElementById('love-canvas');
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width;
+    const h = canvas.height;
+
+    // Parametrik love
+    function getLovePoint(t) {
+      // t: 0..1
+      const angle = t * Math.PI * 2;
+      const x = 16 * Math.pow(Math.sin(angle), 3);
+      const y = 13 * Math.cos(angle) - 5 * Math.cos(2 * angle) - 2 * Math.cos(3 * angle) - Math.cos(4 * angle);
+      return [
+        w/2 + x * 10,
+        h/2 - y * 10
+      ];
+    }
+
+    let progress = 0;
+    const steps = 200;
+    function animate() {
+      ctx.clearRect(0, 0, w, h);
+      ctx.beginPath();
+      for (let i = 0; i <= progress; i++) {
+        const t = i / steps;
+        const [x, y] = getLovePoint(t);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = "#e75480";
+      ctx.lineWidth = 4;
+      ctx.shadowColor = "#d63384";
+      ctx.shadowBlur = 10;
+      ctx.stroke();
+
+      if (progress < steps) {
+        progress++;
+        requestAnimationFrame(animate);
+      }
+    }
+
+    animate();
+
+    // Animasi pada tulisan
+    const text = document.getElementById('animated-text');
+
+    let opacity = 0, growing = true;
+    let fadeDir = 1; // 1: muncul, -1: memudar
+    let scale = 1;
+    let translateY = 40; // mulai dari bawah
+
+    function animateText() {
+      // Skala animasi
+      if (growing) {
+        scale += 0.008;
+        if (scale >= 1.13) growing = false;
+      } else {
+        scale -= 0.008;
+        if (scale <= 0.97) growing = true;
+      }
+      // Opacity dan posisi animasi
+      if (opacity < 1) opacity += 0.02;
+      if (translateY > 0) translateY -= 2;
+
+      text.style.transform = `scale(${scale}) translateY(${translateY}px)`;
+      text.style.opacity = opacity;
+      requestAnimationFrame(animateText);
+    }
+    animateText();
+
+    // Play audio otomatis saat halaman dibuka
+    window.addEventListener('DOMContentLoaded', function() {
+      const audio = document.getElementById('love-audio');
+      audio.currentTime = 0;
+      audio.play().catch(() => {
+        // Jika autoplay gagal (browser block), play saat user klik di mana saja
+        const playAudio = () => {
+          audio.play();
+          window.removeEventListener('click', playAudio);
+        };
+        window.addEventListener('click', playAudio);
+      });
+    });
+  </script>
+</body>
+</html>

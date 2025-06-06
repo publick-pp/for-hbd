@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game Rintangan Sederhana</title>
+  <style>
+    body {
+      background: #ffe4ec;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .game-container {
+      background: #fff0f6;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(220, 38, 120, 0.15);
+      padding: 24px 24px 8px 24px;
+      text-align: center;
+    }
+    canvas {
+      background: #fff;
+      border-radius: 8px;
+      display: block;
+      margin: 0 auto 12px auto;
+      box-shadow: 0 2px 8px rgba(220, 38, 120, 0.12);
+    }
+    .btn {
+      background: #e75480;
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      padding: 10px 28px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 10px;
+      box-shadow: 0 2px 8px rgba(220, 38, 120, 0.12);
+      transition: background 0.2s;
+    }
+    .btn:hover {
+      background: #d63384;
+    }
+  </style>
+</head>
+<body>
+  <div class="game-container">
+    <h2 style="color: #d63384;">game buat gita</h2>
+    <canvas id="game" width="400" height="200"></canvas>
+    <div>
+      <button class="btn" onclick="jump()" id="jumpBtn" ontouchstart="jump()">Loncat</button>
+      <button class="btn" onclick="restartGame()">Restart</button>
+      <a href="index.html" class="btn">Kembali</a>
+      <a href="hal4" class="btn">lanjut</a>
+    </div>
+    <p style="margin-top:8px;">Klik tombol <b>Loncat</b> untuk melompat!</p>
+  </div>
+  <script>
+    const canvas = document.getElementById('game');
+    const ctx = canvas.getContext('2d');
+
+    // Player
+    const player = {
+      x: 40,
+      y: 150,
+      w: 24,
+      h: 24,
+      vy: 0,
+      jumpPower: -6,
+      gravity: 0.3,
+      onGround: true,
+      color: "#e75480"
+    };
+
+    // Obstacle
+    let obstacles = [];
+    let frame = 0;
+    let score = 0;
+    let gameOver = false;
+
+    function drawPlayer() {
+      ctx.fillStyle = player.color;
+      ctx.fillRect(player.x, player.y, player.w, player.h);
+      // Mata
+      ctx.fillStyle = "#fff";
+      ctx.fillRect(player.x+16, player.y+6, 4, 4);
+      ctx.fillStyle = "#000";
+      ctx.fillRect(player.x+18, player.y+8, 2, 2);
+    }
+
+    function drawObstacles() {
+      ctx.fillStyle = "#d63384";
+      obstacles.forEach(obs => {
+        ctx.fillRect(obs.x, obs.y, obs.w, obs.h);
+      });
+    }
+
+    function drawGround() {
+      ctx.fillStyle = "#c2185b";
+      ctx.fillRect(0, 180, 400, 20);
+    }
+
+    function drawScore() {
+      ctx.fillStyle = "#d63384";
+      ctx.font = "bold 18px Arial";
+      ctx.fillText("Score: " + score, 10, 25);
+    }
+
+    function resetGame() {
+      player.y = 150;
+      player.vy = 0;
+      player.onGround = true;
+      obstacles = [];
+      frame = 0;
+      score = 0;
+      gameOver = false;
+    }
+
+    function restartGame() {
+      resetGame();
+      requestAnimationFrame(gameLoop);
+    }
+
+    function gameLoop() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawGround();
+      drawPlayer();
+      drawObstacles();
+      drawScore();
+
+      if (gameOver) {
+        ctx.fillStyle = "#d63384";
+        ctx.font = "bold 28px Arial";
+        ctx.fillText("Game Over!", 120, 110);
+        ctx.font = "16px Arial";
+        ctx.fillText("Tekan Restart untuk main lagi", 100, 135);
+        return;
+      }
+
+      // Player physics
+      player.vy += player.gravity;
+      player.y += player.vy;
+      if (player.y >= 150) {
+        player.y = 150;
+        player.vy = 0;
+        player.onGround = true;
+      } else {
+        player.onGround = false;
+      }
+
+      // Obstacle logic
+      if (frame % 70 === 0) {
+        const height = 24 + Math.random() * 16;
+        obstacles.push({ x: 400, y: 180 - height, w: 18, h: height });
+      }
+      obstacles.forEach(obs => obs.x -= 3);
+      obstacles = obstacles.filter(obs => obs.x + obs.w > 0);
+
+      // Collision
+      obstacles.forEach(obs => {
+        if (
+          player.x < obs.x + obs.w &&
+          player.x + player.w > obs.x &&
+          player.y < obs.y + obs.h &&
+          player.y + player.h > obs.y
+        ) {
+          gameOver = true;
+        }
+      });
+
+      // Score
+      obstacles.forEach(obs => {
+        if (!obs.passed && obs.x + obs.w < player.x) {
+          score++;
+          obs.passed = true;
+        }
+      });
+
+      frame++;
+      if (!gameOver) requestAnimationFrame(gameLoop);
+    }
+
+    function jump() {
+      if (player.onGround && !gameOver) {
+        player.vy = player.jumpPower;
+      }
+    }
+
+    resetGame();
+    requestAnimationFrame(gameLoop);
+  </script>
+</body>
+</html>
